@@ -1,15 +1,18 @@
 const express = require("express");
 require("dotenv").config();
 const app = express();
+const cors = require("cors");
+const dbConnection = require("./config/dbConfig");
 
-// middleware if the routes doesent found
-app.use((req, res, next) => {
-  res.status(404).send("Sorry, we cannot find that!");
-});
+// db connection
+dbConnection();
 
-app.get("/", (req, res) => {
-  res.send("hello social backend");
-});
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+  })
+);
 
 const port = process.env.PORT;
 app.listen(port, () => {
