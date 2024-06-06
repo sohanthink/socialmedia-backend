@@ -3,9 +3,7 @@ require("dotenv").config();
 const app = express();
 const cors = require("cors");
 const dbConnection = require("./config/dbConfig");
-
-// db connection
-dbConnection();
+const route = require("./routes");
 
 app.use(
   cors({
@@ -14,7 +12,14 @@ app.use(
   })
 );
 
+app.use(express.json());
+
+// db connection
+dbConnection();
+
 const port = process.env.PORT;
 app.listen(port, () => {
   console.log("server is running");
 });
+
+app.use(route);
