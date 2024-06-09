@@ -5,7 +5,8 @@ const asyncHandler = require("../utils/asyncHandler");
 const { validateEmail, validateLength } = require("../utils/validation");
 
 const registerUser = async (req, res) => {
-  const { firstName, lastName, email, userName, password } = req.body;
+  const { firstName, lastName, email, userName, password, birthDate, gender } =
+    req.body;
 
   if (!firstName) {
     return res.status(400).json({ message: "First Name Required" });
@@ -21,13 +22,13 @@ const registerUser = async (req, res) => {
     return res.status(400).json({ message: "Last Name Required" });
   }
 
-  if (!validateEmail(email)) {
-    return res.status(400).json({ message: "wrong Email Address" });
-  }
-
   if (!email) {
     return res.status(400).json({ message: "Email Required" });
-    // throw new ApiError(400, "Email is required"); // Uncomment this line
+    // throw new ApiError(400, "Email is required");
+  }
+
+  if (!validateEmail(email)) {
+    return res.status(400).json({ message: "wrong Email Address" });
   }
 
   if (!userName) {
@@ -42,7 +43,16 @@ const registerUser = async (req, res) => {
     return res.status(400).json({ message: "User Already Exists" });
   }
 
-  const data = { firstName, lastName, email, userName, password };
+  const data = {
+    firstName,
+    lastName,
+    email,
+    userName,
+    password,
+    birthDate,
+    gender,
+  };
+
   const newUser = await User.create(data);
 
   res.status(200).json(new ApiResponse(200, newUser, "success sending"));
