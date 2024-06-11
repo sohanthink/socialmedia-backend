@@ -2,6 +2,7 @@ const User = require("../models/user.model");
 const ApiError = require("../utils/apiError");
 const ApiResponse = require("../utils/apiResponse");
 const asyncHandler = require("../utils/asyncHandler");
+const { jwtoken } = require("../utils/token");
 const { validateEmail, validateLength } = require("../utils/validation");
 
 const registerUser = async (req, res) => {
@@ -54,7 +55,8 @@ const registerUser = async (req, res) => {
   };
 
   const newUser = await User.create(data);
-
+  const emailToken = jwtoken({ id: newUser._id.toString() }, "30m");
+  console.log(emailToken);
   res.status(200).json(new ApiResponse(200, newUser, "success sending"));
 };
 
