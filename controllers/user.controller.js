@@ -5,6 +5,7 @@ const asyncHandler = require("../utils/asyncHandler");
 const sendEmail = require("../utils/mailer");
 const { jwtoken } = require("../utils/token");
 const { validateEmail, validateLength } = require("../utils/validation");
+const bcrypt = require("bcrypt");
 
 const registerUser = async (req, res) => {
   const { firstName, lastName, email, userName, password, birthDate, gender } =
@@ -58,12 +59,41 @@ const registerUser = async (req, res) => {
   const newUser = await User.create(data);
 
   const emailToken = jwtoken({ id: newUser._id.toString() }, "30m");
-
   const url = `${process.env.URL}/activate/${emailToken}`;
-
   sendEmail(newUser.email, newUser.firstName, url);
 
   res.status(200).json(new ApiResponse(200, newUser, "success sending"));
 };
 
-module.exports = registerUser;
+const loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+
+  if ([email, password].some((field) => field?.trim() == "")) {
+    return res.status(400).json({
+      message: "Email and Password fields are required",
+    });
+  }
+
+  if (!user) {
+    return res.status(404).json({
+      message: "User Desent Exists",
+    });
+  }
+
+  const passcheck = await bcrypt.compare(password, user.password);
+  if (!passcheck) {
+    return res.status(400).json({
+      message: "Invalid credentials",
+    });
+  }
+
+  userDetails = await User.findOne({ email }).select("-password");
+
+  return res.status(200).json({
+    message: "Login successfull",
+    userDetails,
+  });
+});
+
+module.exports = { registerUser, loginUser };
