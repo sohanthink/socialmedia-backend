@@ -4,7 +4,7 @@ const { google } = require("googleapis");
 const clientId = process.env.MAILING_CLIENT_ID;
 const clientSecret = process.env.MAILING_CLIENT_SECRET;
 const refreshToken = process.env.MAILING_REFRESH_TOKEN;
-const redirectUri = "https://developers.google.com/oauthplayground/"; // Replace if needed
+const redirectUri = "https://developers.google.com/oauthplayground"; // Replace if needed
 const email = process.env.MAIL;
 
 const oAuth2Client = new google.auth.OAuth2(
