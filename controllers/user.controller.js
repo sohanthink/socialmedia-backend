@@ -133,4 +133,10 @@ const loginUser = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { registerUser, loginUser, verifiedUser };
+const auth = asyncHandler(async (req, res) => {
+  return res.status(200).json({
+    message: "valid USer",
+  });
+});
+
+module.exports = { registerUser, loginUser, verifiedUser, auth };

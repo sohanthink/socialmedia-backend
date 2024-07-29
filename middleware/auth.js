@@ -1,23 +1,31 @@
-// const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
-// exports.authUser = async (req,res,next)={
-//     try {
-//         let temporary = req.header('Authorization')
-//         let token = temporary ? temporary.slice(7, temporary.length) : " "
+exports.authUser = async (req, res, next) => {
+  try {
+    let temporary = req.header("Authorization");
+    let token = temporary ? temporary.slice(7, temporary.length) : " ";
 
-//         if(!token){
-//             res.status(400).json{
-//                 message : 'invalid Authorization'
-//             }
-//         }
+    if (!token) {
+      return res.status(400).json({
+        message: "Invalid Token",
+      });
+    }
 
-//         jwt.verify(token,)
-
-//     } catch (error) {
-//         if(error){
-//             res.status(400).json{
-//                 message : error.message
-//             }
-//         }
-//     }
-// }
+    jwt.verify(token, process.env.SECRET_TOKEN, (err, user) => {
+      if (err) {
+        //   console.log(err);
+        return res.status(404).json({
+          message: "Invalid Authorization",
+        });
+      }
+      req.user = user;
+      next();
+    });
+  } catch (error) {
+    if (error) {
+      return res.status(400).json({
+        message: error.message,
+      });
+    }
+  }
+};
