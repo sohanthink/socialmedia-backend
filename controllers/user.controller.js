@@ -66,9 +66,11 @@ const registerUser = async (req, res) => {
 
   const token = jwtoken({ id: newUser._id.toString() }, "7d");
 
+  // newUser.token = token;
+  // await newUser.save();
+
   res.status(200).json({
     data: newUser,
-    token,
     message: "Email Verification Link Sent!!",
   });
 };
@@ -125,11 +127,20 @@ const loginUser = asyncHandler(async (req, res) => {
     });
   }
 
-  userDetails = await User.findOne({ email }).select("-password");
+  const token = jwtoken({ id: user._id.toString() }, "7d");
+  // userDetails = await User.findOne({ email }).select("-password token:token");
 
   return res.status(200).json({
     message: "Login successfull",
-    userDetails,
+    id: user._id,
+    userName: user.userName,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    profilePicture: user.profilePicture,
+    cover: user.cover,
+    isVerified: user.isVerified,
+    token: token,
   });
 });
 
